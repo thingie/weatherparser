@@ -1,0 +1,10 @@
+CREATE TABLE records
+(date text,
+windDirection text,
+windSpeed int,
+airPressure real,
+temperature real,
+dewPoint real,
+relativeHumidity int,
+rainfall text
+, unique(date));
