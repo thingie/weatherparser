@@ -71,7 +71,7 @@ except Exception, e:
     airPressure = None
 
 try:
-    temperature = float(re.search('\\xa0([1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[15].text).group(1))
+    temperature = float(re.search('\\xa0(-*[1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[15].text).group(1))
 except Exception, e:
     print 'failed to read temperature'
     sys.exit(1) # cannot recover
@@ -98,9 +98,16 @@ try:
     sqldb = sqlite3.connect(dbfile)
     c = sqldb.cursor()
 
+    safeText = None
+    try:
+        safeText = htmltext.decode('cp1250')
+    except:
+        pass
+
+    #sqldb.text_factory = str
     c.execute('''INSERT INTO records (date, windDirection, windSpeed, airPressure, temperature, dewPoint,
-                 relativeHumidity, rainfall) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',  (recordDate, windDirection,
-                                                                                   windSpeed, airPressure, temperature, dewPoint, relativeHumidity, rainfall))
+                 relativeHumidity, rainfall, originalData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',  (recordDate, windDirection,
+                                                                                   windSpeed, airPressure, temperature, dewPoint, relativeHumidity, rainfall, safeText))
 
     sqldb.commit()
     sqldb.close()
