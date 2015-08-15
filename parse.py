@@ -34,15 +34,16 @@ class weatherRecord(object):
     plaintext = None
     station = None
 
-    def saveToDb(dbConnection):
+    def saveToDb(self, dbConnection):
         try:
             c = dbConnection.cursor()
             c.execute('''INSERT INTO records (date, windDirection, windSpeed, airPressure, temperature, dewPoint,
                          relativeHumidity, rainfall, station, originalData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                      (recordDate, windDirection, windSpeed, airPressure, temperature, dewPoint, relativeHumidity,
-                       rainfall, station, safeText))
+                      (self.recordDate, self.windDirection, self.windSpeed, self.airPressure, self.temperature,
+                       self.dewPoint, self.relativeHumidity, self.rainfall, self.station, self.safeText))
             dbConnection.commit()
         except Exception, e:
+            print 'failed to write record of %s for %s' % (recordDate, station)
             print 'sql failed: %s' % e
 
 def getData(stationUrl, stationName):
@@ -51,7 +52,7 @@ def getData(stationUrl, stationName):
         data = urllib2.urlopen(stationUrl)
         htmltext = data.read()
     except Exception, e:
-        print 'no data read'
+        print 'no data read for station ', stationName
         sys.exit(1)
 
     if htmltext is not None:
@@ -132,27 +133,32 @@ sqldb = sqlite3.connect(dbfile)
 
 try:
     karlov = getData(weatherStations['praha-karlov'], 'praha-karlov').saveToDb(sqldb)
-except:
-    pass
+except Exception, e:
+    print 'failed to write station karlov'
+    print e
 
 try:
     libus = getData(weatherStations['praha-libus'], 'praha-libus').saveToDb(sqldb)
-except:
-    pass
+except Exception, e:
+    print 'failed to write station libus'
+    print e
 
 try:
     kbely = getData(weatherStations['praha-kbely'], 'praha-kbely').saveToDb(sqldb)
-except:
-    pass
+except Exception, e:
+    print 'failed to write station kbely'
+    print e
 
 try:
     letiste = getData(weatherStations['praha-ruzyne'], 'praha-ruzyne').saveToDb(sqldb)
-except:
-    pass
+except Exception, e:
+    print 'failed to write station letiste'
+    print e
 
 try:
     mosnov = getData(weatherStations['ostrava-mosnov'], 'ostrava-mosnov').saveToDb(sqldb)
-except:
-    pass
+except Exception, e:
+    print 'failed to write station mosnov'
+    print e
 
 sqldb.close()
