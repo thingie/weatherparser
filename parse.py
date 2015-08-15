@@ -51,13 +51,13 @@ def getData(stationUrl, stationName):
         htmltext = data.read()
     except Exception, e:
         print 'no data read for station ', stationName
-        sys.exit(1)
+        raise e
 
     if htmltext is not None:
         soup = BeautifulSoup(htmltext)
     else:
         print 'cannot read text'
-        sys.exit(1)
+        rise Exception('Could not read text')
 
     r = weatherRecord()
     r.station = stationName
