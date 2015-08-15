@@ -57,7 +57,7 @@ def getData(stationUrl, stationName):
         soup = BeautifulSoup(htmltext)
     else:
         print 'cannot read text'
-        rise Exception('Could not read text')
+        raise Exception('Could not read text')
 
     r = weatherRecord()
     r.station = stationName

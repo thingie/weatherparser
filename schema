@@ -9,4 +9,4 @@ relativeHumidity int,
 rainfall text,
 station text,
 originalData text,
-unique(date));
+unique(date, station));
