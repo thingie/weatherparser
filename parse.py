@@ -16,8 +16,6 @@ weatherStations = {
 }
 
 # config (kind of)
-station = 'praha-karlov'
-url = weatherStations[station]
 dbfile = '/home/pony/weather2.db'
 
 class weatherRecord(object):
@@ -38,12 +36,12 @@ class weatherRecord(object):
         try:
             c = dbConnection.cursor()
             c.execute('''INSERT INTO records (date, windDirection, windSpeed, airPressure, temperature, dewPoint,
-                         relativeHumidity, rainfall, station, originalData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                         relativeHumidity, rainfall, station, originalData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                       (self.recordDate, self.windDirection, self.windSpeed, self.airPressure, self.temperature,
                        self.dewPoint, self.relativeHumidity, self.rainfall, self.station, self.safeText))
             dbConnection.commit()
         except Exception, e:
-            print 'failed to write record of %s for %s' % (recordDate, station)
+            print 'failed to write record of %s for %s' % (self.recordDate, station)
             print 'sql failed: %s' % e
 
 def getData(stationUrl, stationName):
