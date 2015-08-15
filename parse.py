@@ -41,13 +41,13 @@ class weatherRecord(object):
                        self.dewPoint, self.relativeHumidity, self.rainfall, self.station, self.safeText))
             dbConnection.commit()
         except Exception, e:
-            print 'failed to write record of %s for %s' % (self.recordDate, station)
+            print 'failed to write record of %s for %s' % (self.recordDate, self.station)
             print 'sql failed: %s' % e
 
 def getData(stationUrl, stationName):
     htmltext = None
     try:
-        data = urllib2.urlopen(stationUrl)
+        data = urllib2.urlopen(stationUrl, None, 30)
         htmltext = data.read()
     except Exception, e:
         print 'no data read for station ', stationName
