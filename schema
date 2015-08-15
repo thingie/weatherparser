@@ -6,5 +6,7 @@ airPressure real,
 temperature real,
 dewPoint real,
 relativeHumidity int,
-rainfall text
-, unique(date));
+rainfall text,
+station text,
+originalData text,
+unique(date));
