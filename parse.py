@@ -81,7 +81,8 @@ def getData(stationUrl, stationName):
         r.clouds = None  # we can live without clouds :)
 
     try:
-        windMatch = re.search(' (.+)\\xa0-\\xa0([1-9][0-9]*) m/s', soup.find_all('td')[7].text)
+        windIndex = 7 if r.station == "praha-kbely" else 9
+        windMatch = re.search(' (.+)\\xa0-\\xa0([1-9][0-9]*) m/s', soup.find_all('td')[windIndex].text)
         r.windSpeed = int(windMatch.group(2))
         r.windDirection = windMatch.group(1)
     except Exception, e:
@@ -90,31 +91,36 @@ def getData(stationUrl, stationName):
         r.windDirection = None
 
     try:
-        r.airPressure = float(re.search('\\xa0([1-9][0-9]*\.[0-9]+) hPa', soup.find_all('td')[11].text).group(1))
+        airIndex = 11 if r.station == "praha-kbely" else 13
+        r.airPressure = float(re.search('\\xa0([1-9][0-9]*\.[0-9]+) hPa', soup.find_all('td')[airIndex].text).group(1))
     except Exception, e:
         print 'failed to read air pressure'
         r.airPressure = None
 
     try:
-        r.temperature = float(re.search('\\xa0(-*[1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[15].text).group(1))
+        tempIndex = 15 if r.station == "praha-kbely" else 17
+        r.temperature = float(re.search('\\xa0(-*[1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[tempIndex].text).group(1))
     except Exception, e:
         print 'failed to read temperature'
         raise Exception('No temperature')
 
     try:
-        r.dewPoint = float(re.search('\\xa0([1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[17].text).group(1))
+        dewIndex = 17 if r.station == "praha-kbely" else 19
+        r.dewPoint = float(re.search('\\xa0([1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[dewIndex].text).group(1))
     except Exception, e:
         print 'failed to read dewPoint'
         r.dewPoint = None
 
     try:
-        r.relativeHumidity = int(re.search('\\xa0([1-9][0-9]*) \%', soup.find_all('td')[19].text).group(1))
+        humidityIndex = 19 if r.station == "praha-kbely" else 21
+        r.relativeHumidity = int(re.search('\\xa0([1-9][0-9]*) \%', soup.find_all('td')[humidityIndex].text).group(1))
     except Exception, e:
         print 'failed to read relativeHumidity'
         r.relativeHumidity = None
 
     try:
-        r.rainfall = re.search('\\xa0(.*)\\xa0', soup.find_all('td')[27].text).group(1)
+        rainfallIndex  = 27 if r.station == "praha-kbely" else 29
+        r.rainfall = re.search('\\xa0(.*)\\xa0', soup.find_all('td')[rainfallIndex].text).group(1)
     except Exception, e:
         print 'failed to parse rainfall'
         r.rainfall = None
