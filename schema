@@ -10,3 +10,9 @@ rainfall text,
 station text,
 originalData text,
 unique(date, station));
+
+CREATE TABLE errors
+(date text,
+checksum text,
+badtext text,
+unique(date, checksum));

@@ -6,6 +6,7 @@ import sys
 import re
 import datetime
 import sqlite3
+from hashlib import sha256
 
 weatherStations = {
     'praha-karlov': 'http://pr-asv.chmi.cz/synopy-map/pocasina.php?indstanice=11519',
@@ -44,6 +45,23 @@ class weatherRecord(object):
             print 'failed to write record of %s for %s' % (self.recordDate, self.station)
             print 'sql failed: %s' % e
 
+"""
+Dump raw data in case of a fatal error during parsing
+
+non-fatal errors are recoverable from safeText in the regular record
+binds global sqldb (TODO, not very cool)
+"""
+def fatalErrDump(errText):
+    chsum = sha256(errText).hexdigest()
+    try:
+        c = sqlDb.cursor()
+        c.execute('''INSERT INTO errors (date, checksum, badtext) VALUES (?, ?, ?)''',
+                  ("date('now')", chsum, errText))
+        sqlDb.commit()
+    except Exception, e: 
+        print 'there was a fatal error and the error log failed as well'
+        print 'well, what now?'
+
 def getData(stationUrl, stationName):
     htmltext = None
     try:
@@ -72,6 +90,7 @@ def getData(stationUrl, stationName):
     except Exception, e:
         print dateString
         print 'date parse failed'
+        fatalErrDump(htmltext)
         raise Exception('Could not get recordDate')
     
     try:
@@ -102,6 +121,7 @@ def getData(stationUrl, stationName):
         r.temperature = float(re.search('\\xa0(-*[1-9][0-9]*\.?[0-9]*)\\xb0', soup.find_all('td')[tempIndex].text).group(1))
     except Exception, e:
         print 'failed to read temperature'
+        fatalErrDump(htmltext)
         raise Exception('No temperature')
 
     try:
