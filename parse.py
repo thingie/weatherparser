@@ -69,6 +69,12 @@ def getData(stationUrl, stationName):
 
         r.recordDate = datetime.datetime(int(dm.group(3)), int(dm.group(2)), int(dm.group(1)), hour)
 
+        # sometimes I get records (at the last day of a month) with the date
+        # of the last day of the next month, let's drop such record right away
+        # it requires a correct time on the system, but that should be quite easy
+        if abs((r.recordDate - datetime.datetime.now()).days) > 7:
+            raise Exception("Invalid record date %s" % r.recordDate)
+
     except Exception, e:
         print dateString
         print 'date parse failed'
