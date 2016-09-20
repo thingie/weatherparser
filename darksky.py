@@ -53,8 +53,6 @@ except Exception, e:
 url = 'https://api.darksky.net/forecast/%s/%s,%s?units=si' % (configuration['apiKey'],
                                                               configuration['longitude'],
                                                               configuration['latitude'])
-print url
-
 jsonData = None
 try:
     data = urllib2.urlopen(url, None, 30)
